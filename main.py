@@ -17,10 +17,35 @@ wine_class = [i[0] for i in data]
 # cross validation of data
 # generator of folding
 kf = sklearn.model_selection.KFold(n_splits=5, shuffle=True, random_state=42)
-clf = svm.SVC(kernel='linear', C=1)
-# yeah, thats works, but I need to build it more automatically
-# so, yesterday, I'll write smth to automate this
+
+# without scaling
+max_score = 0
+best_k = 0
 for k in range(1,51):
     k_neighbors = sklearn.neighbors.KNeighborsClassifier(n_neighbors=k)
-    print(k, round(sklearn.model_selection.cross_val_score(estimator=k_neighbors, X=feature, y=wine_class, cv=kf).mean(), 2))
+    score = sklearn.model_selection.cross_val_score(estimator=k_neighbors, X=feature, y=wine_class, cv=kf).mean()
+    if score > max_score:
+        max_score = score
+        best_k = k
 
+ans = open('answers/answer_1', 'w')
+ans.write(str(best_k))
+
+ans = open('answers/answer_2', 'w')
+ans.write(str(round(max_score, 2)))
+
+# with scaling
+feature = sklearn.preprocessing.scale(feature)
+max_score = 0
+best_k = 0
+for k in range(1,51):
+    k_neighbors = sklearn.neighbors.KNeighborsClassifier(n_neighbors=k)
+    score = sklearn.model_selection.cross_val_score(estimator=k_neighbors, X=feature, y=wine_class, cv=kf).mean()
+    if score > max_score:
+        max_score = score
+        best_k = k
+ans = open('answers/answer_3', 'w')
+ans.write(str(best_k))
+
+ans = open('answers/answer_4', 'w')
+ans.write(str(round(max_score, 2)))
